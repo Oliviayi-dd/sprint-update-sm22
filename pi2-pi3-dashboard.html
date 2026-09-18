@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sprint Update: SM22</title>
+  <style>
+    :root {
+      --ink: #202428;
+      --muted: #696170;
+      --paper: #fbf8fb;
+      --panel: #ffffff;
+      --line: #eadde7;
+      --magenta: #d72d72;
+      --magenta-deep: #7b155e;
+      --magenta-soft: #fde7f0;
+      --plum: #5a1556;
+      --plum-soft: #f0e2ef;
+      --cyan: #007c89;
+      --cyan-soft: #e1f4f6;
+      --gold: #9a6a00;
+      --gold-soft: #f8edce;
+      --green: #347750;
+      --green-soft: #e4f0e8;
+      --shadow: 0 18px 45px rgba(123, 21, 94, 0.11);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(120deg, rgba(215, 45, 114, 0.12), transparent 32%),
+        linear-gradient(240deg, rgba(90, 21, 86, 0.12), transparent 34%),
+        radial-gradient(circle at 100% 0%, rgba(215, 45, 114, 0.1), transparent 28%),
+        repeating-linear-gradient(90deg, rgba(90, 21, 86, 0.04) 0, rgba(90, 21, 86, 0.04) 1px, transparent 1px, transparent 72px),
+        var(--paper);
+      font-family: "Aptos", "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-main,
+    .hero-side,
+    .panel,
+    .metric,
+    .workstream,
+    .timeline-item,
+    .risk-band {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(223, 229, 232, 0.95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-main {
+      padding: 30px;
+      min-height: 300px;
+      grid-column: 1 / -1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--magenta), var(--magenta-deep), var(--plum));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 74px;
+      height: 48px;
+      color: var(--magenta);
+      border: 5px solid currentColor;
+      border-right-width: 8px;
+      font-size: 10px;
+      font-weight: 900;
+      line-height: 1;
+      text-align: center;
+      background: #ffffff;
+      transform: skewY(-2deg);
+    }
+
+    .brand-name {
+      color: var(--plum);
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .brand-name sup {
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--magenta-soft);
+      color: var(--magenta-deep);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      margin-top: 18px;
+      max-width: 760px;
+      font-family: "Georgia", "Cambria", serif;
+      font-size: 44px;
+      line-height: 1.06;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 780px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .periods {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .period {
+      display: grid;
+      gap: 2px;
+      min-width: 180px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(251, 250, 247, 0.75);
+      text-align: left;
+    }
+
+    .period.tab-button {
+      min-height: 68px;
+      padding: 12px 14px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: none;
+    }
+
+    .period.tab-button[aria-selected="true"] {
+      color: #ffffff;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--magenta), var(--plum));
+      box-shadow: 0 10px 24px rgba(123, 21, 94, 0.2);
+    }
+
+    .period strong {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .period span {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .period.tab-button[aria-selected="true"] strong,
+    .period.tab-button[aria-selected="true"] span {
+      color: #ffffff;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      margin: 0 0 24px;
+      padding: 8px;
+      width: fit-content;
+      max-width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+    }
+
+    .tab-button {
+      min-height: 42px;
+      padding: 8px 18px;
+      border: 0;
+      border-radius: 6px;
+      color: var(--plum);
+      background: transparent;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .tab-button[aria-selected="true"] {
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--magenta), var(--plum));
+      box-shadow: 0 8px 22px rgba(123, 21, 94, 0.22);
+    }
+
+    .tab-button:focus-visible {
+      outline: 3px solid rgba(215, 45, 114, 0.35);
+      outline-offset: 3px;
+    }
+
+    .hero-side {
+      padding: 22px;
+      display: grid;
+      align-content: space-between;
+      gap: 18px;
+    }
+
+    .side-title {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .summary-list div {
+      padding-left: 13px;
+      border-left: 4px solid var(--magenta);
+    }
+
+    .summary-list strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .summary-list span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .metric {
+      padding: 18px;
+      min-height: 138px;
+      display: grid;
+      align-content: space-between;
+      gap: 16px;
+    }
+
+    .metric-value {
+      font-family: "Georgia", "Cambria", serif;
+      font-size: 29px;
+      line-height: 1;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .metric.teal { border-top: 5px solid var(--magenta); }
+    .metric.blue { border-top: 5px solid var(--plum); }
+    .metric.amber { border-top: 5px solid var(--gold); }
+    .metric.rose { border-top: 5px solid var(--cyan); }
+    .metric.green { border-top: 5px solid var(--green); }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin: 30px 0 14px;
+    }
+
+    h2 {
+      font-family: "Georgia", "Cambria", serif;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .section-header p {
+      color: var(--muted);
+      max-width: 540px;
+      font-size: 14px;
+      text-align: right;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .category-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 18px;
+    }
+
+    .filter-button {
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--plum);
+      background: rgba(255, 255, 255, 0.88);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .filter-button[aria-pressed="true"] {
+      color: #ffffff;
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--magenta), var(--plum));
+      box-shadow: 0 8px 18px rgba(123, 21, 94, 0.18);
+    }
+
+    .filter-button:focus-visible {
+      outline: 3px solid rgba(215, 45, 114, 0.35);
+      outline-offset: 3px;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .workstream {
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+      min-height: 100%;
+    }
+
+    .workstream-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 14px;
+    }
+
+    .workstream-title {
+      display: grid;
+      gap: 6px;
+    }
+
+    h3 {
+      font-size: 21px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .category-pill,
+    .status-pill,
+    .impact-pill,
+    .date-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 26px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .category-pill {
+      width: fit-content;
+      color: var(--plum);
+      background: var(--plum-soft);
+    }
+
+    .status-pill.delivered {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .status-pill.planned {
+      color: var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .status-pill.pending {
+      color: var(--magenta-deep);
+      background: var(--magenta-soft);
+    }
+
+    .entry-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .entry {
+      display: grid;
+      gap: 8px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(223, 229, 232, 0.75);
+    }
+
+    .entry:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .entry-head {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .entry-title {
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .entry p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .item-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .detail-block {
+      display: grid;
+      gap: 5px;
+      padding: 12px;
+      min-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(251, 248, 251, 0.72);
+    }
+
+    .detail-label {
+      color: var(--plum);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .detail-block p,
+    .detail-block ul {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .detail-block ul {
+      padding-left: 18px;
+    }
+
+    .detail-block li + li {
+      margin-top: 5px;
+    }
+
+    .impact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .impact-pill {
+      background: rgba(32, 36, 40, 0.06);
+      color: #343a40;
+    }
+
+    .impact-pill.teal { color: var(--magenta-deep); background: var(--magenta-soft); }
+    .impact-pill.blue { color: var(--plum); background: var(--plum-soft); }
+    .impact-pill.amber { color: var(--gold); background: var(--gold-soft); }
+    .impact-pill.rose { color: var(--cyan); background: var(--cyan-soft); }
+    .impact-pill.green { color: var(--green); background: var(--green-soft); }
+
+    .roadmap {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      padding: 34px 0 0;
+    }
+
+    .roadmap::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: 7%;
+      right: 7%;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--magenta), var(--plum), var(--gold));
+    }
+
+    .roadmap-stage {
+      position: relative;
+      display: grid;
+      gap: 12px;
+    }
+
+    .roadmap-stage::before {
+      content: "";
+      position: absolute;
+      top: -23px;
+      left: 22px;
+      width: 18px;
+      height: 18px;
+      border: 4px solid #ffffff;
+      border-radius: 50%;
+      background: var(--magenta);
+      box-shadow: 0 0 0 1px rgba(123, 21, 94, 0.22), 0 8px 18px rgba(123, 21, 94, 0.25);
+    }
+
+    .roadmap-stage:nth-child(2)::before {
+      background: var(--plum);
+    }
+
+    .roadmap-stage:nth-child(3)::before {
+      background: var(--gold);
+    }
+
+    .roadmap-date {
+      display: inline-flex;
+      width: fit-content;
+      min-height: 30px;
+      align-items: center;
+      padding: 4px 11px;
+      border-radius: 999px;
+      color: #ffffff;
+      background: var(--plum);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .roadmap-stage:nth-child(1) .roadmap-date {
+      background: var(--magenta);
+    }
+
+    .roadmap-stage:nth-child(3) .roadmap-date {
+      background: var(--gold);
+    }
+
+    .roadmap-card {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .roadmap-card h3 {
+      font-size: 18px;
+    }
+
+    .roadmap-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .roadmap-card li + li {
+      margin-top: 7px;
+    }
+
+    .roadmap-note {
+      padding: 11px 12px;
+      border-left: 4px solid var(--magenta);
+      border-radius: 6px;
+      background: var(--magenta-soft);
+      color: var(--magenta-deep);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .roadmap-board {
+      overflow-x: auto;
+      padding: 1px 0 10px;
+    }
+
+    .roadmap-table {
+      min-width: 1160px;
+      display: grid;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: var(--shadow);
+    }
+
+    .roadmap-row {
+      display: grid;
+      grid-template-columns: 290px minmax(520px, 1fr) 134px 226px;
+      min-height: 42px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .roadmap-row:last-child {
+      border-bottom: 0;
+    }
+
+    .roadmap-head {
+      min-height: 38px;
+      color: #ffffff;
+      background: #214f7d;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .roadmap-cell {
+      padding: 9px 10px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      font-size: 13px;
+    }
+
+    .roadmap-cell:last-child {
+      border-right: 0;
+    }
+
+    .initiative-cell {
+      color: var(--plum);
+      font-weight: 800;
+    }
+
+    .months-cell {
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(38px, 1fr));
+      align-items: stretch;
+      background:
+        repeating-linear-gradient(90deg, transparent 0, transparent calc(8.333% - 1px), rgba(90, 21, 86, 0.14) calc(8.333% - 1px), rgba(90, 21, 86, 0.14) 8.333%);
+    }
+
+    .month-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 4px;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 900;
+      border-right: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .month-label:last-child {
+      border-right: 0;
+    }
+
+    .bar-stack {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(38px, 1fr));
+      grid-column: 1 / -1;
+      min-height: 40px;
+      padding: 7px 0;
+    }
+
+    .roadmap-bar {
+      min-height: 26px;
+      border-radius: 0;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+    }
+
+    .bar-developing {
+      background: #6caf45;
+    }
+
+    .bar-planning {
+      background: #8061a5;
+    }
+
+    .bar-progress {
+      background: #f2b47e;
+    }
+
+    .bar-released {
+      background: #242424;
+    }
+
+    .status-cell {
+      color: #ffffff;
+      font-weight: 900;
+    }
+
+    .status-developing {
+      background: #6caf45;
+    }
+
+    .status-planning {
+      background: #8061a5;
+    }
+
+    .status-released {
+      background: #000000;
+    }
+
+    .value-cell {
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .roadmap-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 800;
+    }
+
+    .legend-swatch {
+      width: 28px;
+      height: 14px;
+      border-radius: 3px;
+    }
+
+    .date-chip {
+      color: var(--ink);
+      background: rgba(32, 36, 40, 0.07);
+      border: 1px solid rgba(32, 36, 40, 0.08);
+    }
+
+    .timeline-item p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .risk-band {
+      margin-top: 18px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 18px;
+      align-items: start;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .risk-band h3 {
+      font-size: 19px;
+    }
+
+    .risk-band ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .risk-band li + li {
+      margin-top: 8px;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 1040px) {
+      .hero,
+      .category-grid,
+      .risk-band {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .roadmap {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .roadmap::before {
+        display: none;
+      }
+
+      .roadmap-stage::before {
+        display: none;
+      }
+
+      .section-header {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .section-header p {
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        width: min(100% - 24px, 1180px);
+        padding-top: 18px;
+      }
+
+      .hero-main,
+      .hero-side,
+      .workstream,
+      .timeline-item,
+      .risk-band {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .metrics,
+      .roadmap,
+      .tab-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .item-body {
+        grid-template-columns: 1fr;
+      }
+
+      .tab-nav {
+        display: grid;
+        width: 100%;
+      }
+
+      .entry-head,
+      .workstream-top,
+      .timeline-top {
+        flex-direction: column;
+      }
+
+      .status-pill,
+      .date-chip {
+        width: fit-content;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .page {
+        width: 100%;
+        padding: 0;
+      }
+
+      .hero-main,
+      .hero-side,
+      .panel,
+      .metric,
+      .workstream,
+      .timeline-item,
+      .risk-band {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero" aria-labelledby="dashboard-title">
+      <div class="hero-main">
+        <div class="brand" aria-label="Dye & Durham Unity Search themed dashboard">
+          <div class="brand-mark" aria-hidden="true">Dye &<br>Durham</div>
+          <div class="brand-name">Unity<sup>®</sup> Search</div>
+        </div>
+        <span class="eyebrow" style="margin-top: 22px;">Executive update</span>
+        <h1 id="dashboard-title">Sprint Update: SM22</h1>
+        <p class="hero-copy">Executive report covering PI2 delivered outcomes and PI3 delivery plan across KYC/KYB, Property, AI Innovation, and OFM. The update focuses on commercial impact, compliance readiness, automation scale, and platform independence.</p>
+        <div class="periods" role="tablist" aria-label="Dashboard sections">
+          <button class="period tab-button" type="button" role="tab" id="tab-pi2" aria-controls="dashboard-panel" aria-selected="true" data-tab="pi2">
+            <strong>PI2 Achievements</strong>
+            <span>July to September 2026</span>
+          </button>
+          <button class="period tab-button" type="button" role="tab" id="tab-pi3" aria-controls="dashboard-panel" aria-selected="false" data-tab="pi3">
+            <strong>PI3 Plan</strong>
+            <span>16 September to 9 November 2026</span>
+          </button>
+          <button class="period tab-button" type="button" role="tab" id="tab-fy27" aria-controls="roadmap-panel" aria-selected="false" data-tab="fy27">
+            <strong>FY27 Roadmap</strong>
+            <span>April 2026 to March 2027</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard-panel" role="tabpanel" aria-labelledby="tab-pi2">
+      <div class="section-header">
+        <h2 id="categories-title">Executive Report</h2>
+        <p id="category-summary">PI2 outcomes grouped by KYC/KYB, Property, AI Innovation, and OFM.</p>
+      </div>
+
+      <div class="category-filter" aria-label="Filter report items by category">
+        <button class="filter-button" type="button" aria-pressed="true" data-category="all">All</button>
+        <button class="filter-button" type="button" aria-pressed="false" data-category="kyb-kyc">KYC/KYB</button>
+        <button class="filter-button" type="button" aria-pressed="false" data-category="property">Property</button>
+        <button class="filter-button" type="button" aria-pressed="false" data-category="ai">AI Innovation</button>
+        <button class="filter-button" type="button" aria-pressed="false" data-category="ofm">OFM</button>
+      </div>
+
+      <section class="metrics" aria-label="PI2 delivered metrics" data-phase="pi2" data-tab-panel>
+        <article class="metric teal">
+          <div class="metric-value">11,044</div>
+          <div class="metric-label">AML checks volume</div>
+        </article>
+        <article class="metric green">
+          <div class="metric-value">AUD $182,278</div>
+          <div class="metric-label">AML revenue</div>
+        </article>
+        <article class="metric blue">
+          <div class="metric-value">80%</div>
+          <div class="metric-label">API onboarding time reduction</div>
+        </article>
+      </section>
+
+      <aside class="hero-side" aria-label="PI3 goals" data-phase="pi3" data-tab-panel>
+        <div>
+          <div class="side-title">PI3 Goals</div>
+          <div class="summary-list">
+            <div>
+              <strong>Own certificate capability</strong>
+              <span>Certificate Manager and VIC flow reduce reliance on third parties and decouple storage from SM22.</span>
+            </div>
+            <div>
+              <strong>Scale automation</strong>
+              <span>OFM V2 targets 21,810 automated orders annually with monitoring, alerts, and performance uplift.</span>
+            </div>
+            <div>
+              <strong>Expand AML and AI enablement</strong>
+              <span>Company and Trust AML plus SM22 Q&A improve customer onboarding and internal knowledge access.</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="category-grid">
+        <article class="workstream" data-category="kyb-kyc">
+          <div class="workstream-top">
+            <div class="workstream-title">
+              <span class="category-pill">KYC/KYB</span>
+              <h3>AML capability and customer onboarding</h3>
+            </div>
+          </div>
+          <div class="entry-group">
+            <div class="entry" data-phase="pi2">
+              <div class="entry-head">
+                <span class="entry-title">AML checks and policy generator training</span>
+                <span class="status-pill delivered">PI2 Delivered</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Australia Tranche 2 started on 1 July. We partnered with RealAML to deliver AML checks and policy generator training for conveyancing and legal firms.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Created new compliance revenue stream.</li>
+                    <li>Processed 11,044 AML checks.</li>
+                    <li>Generated AUD $182,278 revenue.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill green">New revenue</span>
+                <span class="impact-pill teal">Compliance</span>
+                <span class="impact-pill blue">11,044 checks</span>
+                <span class="impact-pill green">AUD $182,278</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi3">
+              <div class="entry-head">
+                <span class="entry-title">AML Company and Trust</span>
+                <span class="status-pill planned">PI3 Planned</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Deliver Company and Trust AML capability by 9 November as the final major component in the AML product set.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Completes the AML capability set.</li>
+                    <li>Enables onboarding for KYC/KYB customers.</li>
+                    <li>Strengthens compliance coverage for expanded customer segments.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill amber">Target 9 Nov</span>
+                <span class="impact-pill teal">Customer onboarding</span>
+                <span class="impact-pill green">Compliance coverage</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi3">
+              <div class="entry-head">
+                <span class="entry-title">ASIC caching</span>
+                <span class="status-pill planned">PI3 Planned</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Introduce caching for ASIC-dependent flows.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Improves access patterns and performance.</li>
+                    <li>Supports downstream KYC/KYB, reporting, and bank migration flows.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill blue">Performance</span>
+                <span class="impact-pill teal">Platform capability</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="workstream" data-category="ai">
+          <div class="workstream-top">
+            <div class="workstream-title">
+              <span class="category-pill">AI Innovation</span>
+              <h3>Faster answers and lower engineering dependency</h3>
+            </div>
+          </div>
+          <div class="entry-group">
+            <div class="entry" data-phase="pi2">
+              <div class="entry-head">
+                <span class="entry-title">Integration onboarding enhancement - AI</span>
+                <span class="status-pill delivered">PI2 Delivered</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Built an API integration SKILL and Q&A bot covering integration documentation and common onboarding questions, including order status, document download, and matter reference workflows.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Reduced answer turnaround from 1 to 2 engineering hours to within 2 minutes.</li>
+                    <li>Reduced onboarding time by 80%.</li>
+                    <li>Removed dependency on engineers for repeat integration questions.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill blue">80% time reduction</span>
+                <span class="impact-pill teal">API onboarding</span>
+                <span class="impact-pill rose">Reduced dependency</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi3">
+              <div class="entry-head">
+                <span class="entry-title">SM22 Knowledge Q&A and onboarding bot - AI</span>
+                <span class="status-pill planned">PI3 Planned</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Deliver a SM22 knowledge Q&A and onboarding bot by 30 September for engineering and stakeholder self-service.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Enables faster answers across SM22 knowledge.</li>
+                    <li>Improves stakeholder onboarding and support.</li>
+                    <li>Reduces interruption load on engineering teams.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill amber">Target 30 Sep</span>
+                <span class="impact-pill blue">Knowledge access</span>
+                <span class="impact-pill teal">Stakeholder enablement</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="workstream" data-category="ofm">
+          <div class="workstream-top">
+            <div class="workstream-title">
+              <span class="category-pill">OFM</span>
+              <h3>Automation, monitoring, and fulfilment scale</h3>
+            </div>
+          </div>
+          <div class="entry-group">
+            <div class="entry" data-phase="pi2">
+              <div class="entry-head">
+                <span class="entry-title">OFM Automation V1</span>
+                <span class="status-pill pending">PI2 Deployed</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Completed deployment for OFM Automation V1. Activation is pending OFM performance improvement work before turning on.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Established the foundation for OFM automation.</li>
+                    <li>Identified performance improvement as the activation dependency.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill rose">Activation pending</span>
+                <span class="impact-pill teal">Automation foundation</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi3">
+              <div class="entry-head">
+                <span class="entry-title">OFM performance improvement</span>
+                <span class="status-pill planned">PI3 Planned</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Complete OFM performance improvement by 30 September and add monitoring and alerts for operational visibility.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Targets 50% improvement in processing time.</li>
+                    <li>Enables OFM Automation V1 to be turned on.</li>
+                    <li>Improves production confidence through monitoring and alerts.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill amber">Target 30 Sep</span>
+                <span class="impact-pill blue">50% faster</span>
+                <span class="impact-pill teal">Monitoring and alerts</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi3">
+              <div class="entry-head">
+                <span class="entry-title">Deploy OFM Automation V2</span>
+                <span class="status-pill planned">PI3 Planned</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Deploy OFM Automation V2 by 14 October. After V2, OFT can use the SKILL to build the remaining certificate automation.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Saves 283,530 minutes annually.</li>
+                    <li>Automates 21,810 orders annually.</li>
+                    <li>Represents $3,187,664 in revenue.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill amber">Target 14 Oct</span>
+                <span class="impact-pill green">$3,187,664 revenue</span>
+                <span class="impact-pill blue">283,530 mins saved</span>
+                <span class="impact-pill teal">21,810 orders</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="workstream" data-category="property">
+          <div class="workstream-top">
+            <div class="workstream-title">
+              <span class="category-pill">Property</span>
+              <h3>Certificate independence and property flow modernization</h3>
+            </div>
+          </div>
+          <div class="entry-group">
+            <div class="entry" data-phase="pi2">
+              <div class="entry-head">
+                <span class="entry-title">VIC New Property Flow</span>
+                <span class="status-pill delivered">PI2 Delivered</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>This marks another significant milestone for the Moonwalkers team and reflects months of collaboration, innovation, and dedication. Successfully delivering both the QLD and VIC New Property Flow to production is a fantastic achievement and a testament to the team's work and commitment.</p>
+                  <ul>
+                    <li>VIC Related Title Search</li>
+                    <li>VIC 30 Day Dealing Alerts</li>
+                  </ul>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Allows bank customers to order dealing alerts.</li>
+                    <li>Customers receive alerts when a property title changes.</li>
+                    <li>Delivers an on-demand feature that reduces cost for bank customers.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill green">Released to production</span>
+                <span class="impact-pill teal">Bank customer value</span>
+                <span class="impact-pill rose">Cost reduction</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi2">
+              <div class="entry-head">
+                <span class="entry-title">Dynamic Report</span>
+                <span class="status-pill delivered">PI2 Delivered</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Released 11 new dynamic reports combining ASIC and PPSR data into one report.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Closes the SMC to SM22 reporting gap.</li>
+                    <li>Supports customer migration from SMC to SM22.</li>
+                    <li>Represents $1.2M revenue in SMC.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill green">11 reports released</span>
+                <span class="impact-pill blue">ASIC + PPSR</span>
+                <span class="impact-pill teal">SMC migration</span>
+                <span class="impact-pill green">$1.2M revenue</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi3">
+              <div class="entry-head">
+                <span class="entry-title">Certificate Manager</span>
+                <span class="status-pill planned">PI3 Planned</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Deliver Certificate Manager by 9 November as independent certificate storage that communicates with SM22 and OFM through APIs.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Solves the SMC and SM22 certificate management gap.</li>
+                    <li>Removes the need to use Landata for VIC certificates.</li>
+                    <li>Allows OFT to manage certificates independently.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill amber">Target 9 Nov</span>
+                <span class="impact-pill teal">Independent storage</span>
+                <span class="impact-pill blue">API decoupling</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi3">
+              <div class="entry-head">
+                <span class="entry-title">New VIC Certificate Flow</span>
+                <span class="status-pill planned">PI3 Planned</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Use Certificate Manager and OFM automation to bring VIC certificate fulfilment in house by 9 November.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Enables ownership of all product codes.</li>
+                    <li>Reduces reliance on third parties.</li>
+                    <li>Closes the largest gap from SMC.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill amber">Target 9 Nov</span>
+                <span class="impact-pill green">In-house fulfilment</span>
+                <span class="impact-pill rose">Third-party reduction</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi3">
+              <div class="entry-head">
+                <span class="entry-title">Bank migration</span>
+                <span class="status-pill planned">PI3 Planned</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Move CBA and Westpac to use ASIC and dynamic reports from SM22.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Modernizes bank reporting flows.</li>
+                    <li>Aligns CBA and Westpac with ASIC and SM22 dynamic reporting.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill teal">CBA</span>
+                <span class="impact-pill teal">Westpac</span>
+                <span class="impact-pill blue">Dynamic reports</span>
+              </div>
+            </div>
+            <div class="entry" data-phase="pi3">
+              <div class="entry-head">
+                <span class="entry-title">NSW property flow</span>
+                <span class="status-pill planned">PI3 Planned</span>
+              </div>
+              <div class="item-body">
+                <div class="detail-block">
+                  <span class="detail-label">Details</span>
+                  <p>Progress the NSW property flow as a PI3 property roadmap item.</p>
+                </div>
+                <div class="detail-block">
+                  <span class="detail-label">Impact</span>
+                  <ul>
+                    <li>Extends property flow modernization beyond VIC.</li>
+                    <li>Creates a clear roadmap path for NSW property fulfilment improvements.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="impact-row">
+                <span class="impact-pill teal">Property flow</span>
+                <span class="impact-pill amber">Roadmap item</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="roadmap-panel" aria-labelledby="timeline-title" role="tabpanel" data-phase="fy27" data-tab-panel hidden>
+      <div class="section-header">
+        <h2 id="timeline-title">FY27 Roadmap</h2>
+        <p>Roadmap view of initiatives across FY26 Q4 to FY27 Q3, including status, delivery timing, and value drivers.</p>
+      </div>
+
+      <div class="roadmap-board" aria-label="FY27 roadmap by initiative, month, status, and value driver">
+        <div class="roadmap-table">
+          <div class="roadmap-row roadmap-head">
+            <div class="roadmap-cell">Initiative</div>
+            <div class="roadmap-cell months-cell" aria-label="Roadmap months">
+              <span class="month-label">Apr</span>
+              <span class="month-label">May</span>
+              <span class="month-label">Jun</span>
+              <span class="month-label">Jul</span>
+              <span class="month-label">Aug</span>
+              <span class="month-label">Sep</span>
+              <span class="month-label">Oct</span>
+              <span class="month-label">Nov</span>
+              <span class="month-label">Dec</span>
+              <span class="month-label">Jan</span>
+              <span class="month-label">Feb</span>
+              <span class="month-label">Mar</span>
+            </div>
+            <div class="roadmap-cell">Status</div>
+            <div class="roadmap-cell">Value / Driver</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">NON-API Cert Manager</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-planning" style="grid-column: 4 / span 1;"></span><span class="roadmap-bar bar-developing" style="grid-column: 5 / span 2;"></span></div></div>
+            <div class="roadmap-cell status-cell status-developing">In developing</div>
+            <div class="roadmap-cell value-cell">Ops Efficiency, Cost Saving, New Revenue, SMC Migration Gap</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">OFM Performance Enhancement</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-developing" style="grid-column: 6 / span 1;"></span></div></div>
+            <div class="roadmap-cell status-cell status-developing">In developing</div>
+            <div class="roadmap-cell value-cell">Ops Efficiency, Cost Saving</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">OFM Automation Fulfilment - AI - V2</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-developing" style="grid-column: 6 / span 1;"></span></div></div>
+            <div class="roadmap-cell status-cell status-developing">In developing</div>
+            <div class="roadmap-cell value-cell">Ops Efficiency, Cost Saving, SMC Migration Gap</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">AML Training</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-released" style="grid-column: 5 / span 1;"></span></div></div>
+            <div class="roadmap-cell status-cell status-released">Released</div>
+            <div class="roadmap-cell value-cell">New Revenue; Compliance</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">AML Document Generator</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-released" style="grid-column: 4 / span 1;"></span></div></div>
+            <div class="roadmap-cell status-cell status-released">Released</div>
+            <div class="roadmap-cell value-cell">New Revenue; Compliance</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">Certificate Flow for customer</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-planning" style="grid-column: 5 / span 2;"></span><span class="roadmap-bar bar-developing" style="grid-column: 7 / span 2;"></span></div></div>
+            <div class="roadmap-cell status-cell status-planning">In Planning</div>
+            <div class="roadmap-cell value-cell">Ops Efficiency, Cost Saving, New Revenue, SMC Migration</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">AML Company &amp; Trust</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-planning" style="grid-column: 4 / span 1;"></span><span class="roadmap-bar bar-developing" style="grid-column: 5 / span 2;"></span></div></div>
+            <div class="roadmap-cell status-cell status-developing">In developing</div>
+            <div class="roadmap-cell value-cell">New Revenue; Compliance</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">Insight360 Improvement &amp; re-market</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-planning" style="grid-column: 5 / span 1;"></span><span class="roadmap-bar bar-developing" style="grid-column: 6 / span 2;"></span></div></div>
+            <div class="roadmap-cell status-cell status-planning">In Planning</div>
+            <div class="roadmap-cell value-cell">New Revenue; SMC Migration Gap</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">Integration onboarding enhancement - AI</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-developing" style="grid-column: 4 / span 1;"></span><span class="roadmap-bar bar-released" style="grid-column: 5 / span 1;"></span></div></div>
+            <div class="roadmap-cell status-cell status-released">Released</div>
+            <div class="roadmap-cell value-cell">Ops Efficiency, Cost Saving, New Revenue</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">Stakeholder Q&amp;A bot - by product team - AI</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-planning" style="grid-column: 4 / span 1;"></span><span class="roadmap-bar bar-developing" style="grid-column: 5 / span 1;"></span></div></div>
+            <div class="roadmap-cell status-cell status-developing">In developing</div>
+            <div class="roadmap-cell value-cell">Ops Efficiency, Cost Saving</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">VIC Property Innovation - Related Titles + Dealing Alerts</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-developing" style="grid-column: 4 / span 1;"></span><span class="roadmap-bar bar-released" style="grid-column: 5 / span 1;"></span></div></div>
+            <div class="roadmap-cell status-cell status-released">Released</div>
+            <div class="roadmap-cell value-cell">Innovation. New Revenue.</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">ASIC and Dynamic Report Caching - Unity Search</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-planning" style="grid-column: 5 / span 1;"></span><span class="roadmap-bar bar-developing" style="grid-column: 6 / span 1;"></span></div></div>
+            <div class="roadmap-cell status-cell status-planning">In Planning</div>
+            <div class="roadmap-cell value-cell">SMC Migration</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">ASIC Product Gaps</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-planning" style="grid-column: 6 / span 1;"></span><span class="roadmap-bar bar-developing" style="grid-column: 7 / span 2;"></span></div></div>
+            <div class="roadmap-cell status-cell status-planning">In Planning</div>
+            <div class="roadmap-cell value-cell">SMC Migration</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">Bank Migration (CBA + Westpac) - ASIC &amp; Dynamic Reports</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-planning" style="grid-column: 8 / span 2;"></span><span class="roadmap-bar bar-developing" style="grid-column: 10 / span 1;"></span><span class="roadmap-bar bar-released" style="grid-column: 11 / span 1;"></span></div></div>
+            <div class="roadmap-cell status-cell status-planning">In Planning</div>
+            <div class="roadmap-cell value-cell">SMC Migration</div>
+          </div>
+
+          <div class="roadmap-row">
+            <div class="roadmap-cell initiative-cell">UnitySearch User Monitoring API (CBA Request)</div>
+            <div class="roadmap-cell months-cell"><div class="bar-stack"><span class="roadmap-bar bar-planning" style="grid-column: 5 / span 1;"></span><span class="roadmap-bar bar-developing" style="grid-column: 6 / span 2;"></span></div></div>
+            <div class="roadmap-cell status-cell status-planning">In Planning</div>
+            <div class="roadmap-cell value-cell">Bank Security Requirement</div>
+          </div>
+        </div>
+
+        <div class="roadmap-legend" aria-label="Roadmap legend">
+          <span class="legend-item"><span class="legend-swatch bar-developing"></span>In developing</span>
+          <span class="legend-item"><span class="legend-swatch bar-progress"></span>In progress, amber</span>
+          <span class="legend-item"><span class="legend-swatch bar-planning"></span>In planning</span>
+          <span class="legend-item"><span class="legend-swatch bar-released"></span>Released</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="risk-band" aria-labelledby="enablement-title" data-phase="pi3" data-tab-panel>
+      <div>
+        <h3 id="enablement-title">Enablement Chain</h3>
+        <p class="hero-copy" style="font-size: 14px; margin-top: 8px;">PI3 delivery compounds through platform dependencies: OFM performance enables V1 activation, OFM V2 expands automation, and Certificate Manager unlocks independent VIC fulfilment.</p>
+      </div>
+      <ul>
+        <li>OFM Automation V1 is deployed but depends on OFM performance improvement before activation.</li>
+        <li>OFM Automation V2 enables OFT to use the SKILL for remaining certificate automation.</li>
+        <li>Certificate Manager and OFM automation together enable the New VIC Certificate Flow.</li>
+        <li>KYC/KYB roadmap includes ASIC caching; Property roadmap includes bank migration for CBA and Westpac, and NSW property flow.</li>
+      </ul>
+    </section>
+
+    <p class="footer-note">Prepared from PI2 update and PI3 planning notes. PI3 date range assumes 16 September to 9 November 2026 based on supplied target dates.</p>
+  </main>
+  <script>
+    const tabs = Array.from(document.querySelectorAll('.tab-button'));
+    const categoryButtons = Array.from(document.querySelectorAll('.filter-button'));
+    const phasedItems = Array.from(document.querySelectorAll('[data-phase]'));
+    const workstreams = Array.from(document.querySelectorAll('.workstream'));
+    const categoryPanel = document.getElementById('dashboard-panel');
+    const categorySummary = document.getElementById('category-summary');
+    let activeCategory = 'all';
+
+    const summaries = {
+      pi2: 'PI2 outcomes grouped by KYC/KYB, Property, AI Innovation, and OFM.',
+      pi3: 'PI3 roadmap items grouped by KYC/KYB, Property, AI Innovation, and OFM.',
+      fy27: 'FY27 roadmap initiatives by timing, status, and value driver.'
+    };
+
+    function applyCategoryFilter(tabName) {
+      categoryButtons.forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.category === activeCategory));
+      });
+
+      workstreams.forEach((workstream) => {
+        const hasVisiblePhaseEntries = workstream.querySelectorAll(`.entry[data-phase="${tabName}"]`).length > 0;
+        const matchesCategory = activeCategory === 'all' || workstream.dataset.category === activeCategory;
+        workstream.hidden = !hasVisiblePhaseEntries || !matchesCategory || tabName === 'fy27';
+      });
+    }
+
+    function setActiveTab(tabName) {
+      tabs.forEach((tab) => {
+        const isActive = tab.dataset.tab === tabName;
+        tab.setAttribute('aria-selected', String(isActive));
+        tab.tabIndex = isActive ? 0 : -1;
+      });
+
+      phasedItems.forEach((item) => {
+        item.hidden = item.dataset.phase !== tabName;
+      });
+
+      categoryPanel.hidden = tabName === 'fy27';
+      categoryPanel.setAttribute('aria-labelledby', `tab-${tabName}`);
+      categorySummary.textContent = summaries[tabName];
+      applyCategoryFilter(tabName);
+      history.replaceState(null, '', `#${tabName}`);
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
+      tab.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        const currentIndex = tabs.indexOf(tab);
+        const nextIndex = event.key === 'ArrowRight'
+          ? (currentIndex + 1) % tabs.length
+          : (currentIndex - 1 + tabs.length) % tabs.length;
+        tabs[nextIndex].focus();
+        setActiveTab(tabs[nextIndex].dataset.tab);
+      });
+    });
+
+    categoryButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        activeCategory = button.dataset.category;
+        const activeTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true')?.dataset.tab || 'pi2';
+        applyCategoryFilter(activeTab);
+      });
+    });
+
+    const initialTab = location.hash === '#pi3' ? 'pi3' : location.hash === '#fy27' ? 'fy27' : 'pi2';
+    setActiveTab(initialTab);
+  </script>
+</body>
+</html>
